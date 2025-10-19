@@ -35,8 +35,9 @@ class AuthController extends Controller
             'user' => $user,
             'access_token' => $token,
             'token_type' => 'Bearer',
+            'status' => true,
             'message' => 'successfull register',
-        ]);
+        ], 200);
     }
 
     public function login(Request $request)
@@ -54,7 +55,19 @@ class AuthController extends Controller
             'user' => $user,
             'access_token' => $token,
             'token_type' => 'Bearer',
+            'status' => true,
             'message' => 'successfull login',
-        ]);
+        ], 200);
     }
+
+    public function logout(Request $request){
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Logged out successfully'
+        ], 200);
+    }
+
+
 }
