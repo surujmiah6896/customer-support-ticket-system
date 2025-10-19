@@ -60,4 +60,14 @@ class TicketController extends Controller
         ];
         return response()->json($data, 201);
     }
+
+    public function show(Request $request, $id)
+    {
+        $ticket = Ticket::forUser($request->user())->findOrFail($id);
+        $data = [
+            'status' => true,
+            'ticket' => $ticket->load(['user', 'assignedAdmin']),
+        ];
+        return response()->json($data);
+    }
 }
