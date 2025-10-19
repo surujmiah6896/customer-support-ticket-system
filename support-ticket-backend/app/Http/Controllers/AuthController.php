@@ -33,7 +33,7 @@ class AuthController extends Controller
 
         return response()->json([
             'user' => $user,
-            'access_token' => $token,
+            'token' => $token,
             'token_type' => 'Bearer',
             'status' => true,
             'message' => 'successfull register',
@@ -53,7 +53,7 @@ class AuthController extends Controller
 
         return response()->json([
             'user' => $user,
-            'access_token' => $token,
+            'token' => $token,
             'token_type' => 'Bearer',
             'status' => true,
             'message' => 'successfull login',
