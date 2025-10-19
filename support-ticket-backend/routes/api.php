@@ -25,6 +25,7 @@ Route::prefix('v1')->group(function(){
 
         //comments
         Route::post('tickets/{ticketId}/comments', [CommentController::class, "store"]);
+        Route::delete('tickets/{ticketId}/comments/{commentId}', [CommentController::class, 'destroy']);
     });
 });
 
