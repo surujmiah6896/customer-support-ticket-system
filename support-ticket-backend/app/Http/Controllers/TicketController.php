@@ -8,6 +8,22 @@ use Illuminate\Support\Facades\Validator;
 
 class TicketController extends Controller
 {
+    public function index(Request $request)
+    {
+        $user = $request->user();
+        $tickets = Ticket::forUser($user)
+            ->with(['user', 'assignedAdmin'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $data = [
+            'status' => true,
+            'tickets' => $tickets,
+            'message' => 'get all tickets',
+        ];
+
+        return response()->json($data);
+    }
 
     public function store(Request $request)
     {

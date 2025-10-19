@@ -29,4 +29,17 @@ class Ticket extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function assignedAdmin()
+    {
+        return $this->belongsTo(User::class, 'assigned_admin_id');
+    }
+
+    public function scopeForUser($query, $user)
+    {
+        if ($user->isAdmin()) {
+            return $query;
+        }
+        return $query->where('user_id', $user->id);
+    }
 }
