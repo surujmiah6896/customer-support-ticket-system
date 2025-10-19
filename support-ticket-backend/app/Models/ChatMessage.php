@@ -19,4 +19,14 @@ class ChatMessage extends Model
     protected $casts = [
         'is_read' => 'boolean',
     ];
+
+    public function ticket()
+    {
+        return $this->belongsTo(Ticket::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TicketController;
 use Illuminate\Http\Request;
@@ -26,6 +27,9 @@ Route::prefix('v1')->group(function(){
         //comments
         Route::post('tickets/{ticketId}/comments', [CommentController::class, "store"]);
         Route::delete('tickets/{ticketId}/comments/{commentId}', [CommentController::class, 'destroy']);
+
+        //chat
+        Route::post('tickets/{ticketId}/chat', [ChatController::class, 'sendMessage']);
     });
 });
 
