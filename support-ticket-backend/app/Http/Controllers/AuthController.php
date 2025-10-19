@@ -69,5 +69,16 @@ class AuthController extends Controller
         ], 200);
     }
 
+    public function user(Request $request)
+    {
+        $data = [
+            "status"=> true,
+            "user" => $request->user(),
+            "message" => "user get successfully"
+        ];
+
+        return response()->json($data);
+    }
+
 
 }
