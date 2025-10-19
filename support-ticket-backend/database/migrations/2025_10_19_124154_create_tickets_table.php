@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('subject');
             $table->text('description');
             $table->enum('category', ['technical', 'billing', 'general', 'support']);
+            $table->enum('priority', ['low', 'medium', 'high', 'urgent'])->default('medium');
             $table->enum('status', ['open', 'in_progress', 'resolved', 'closed'])->default('open');
             $table->string('attachment')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
