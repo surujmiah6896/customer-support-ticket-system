@@ -10,6 +10,30 @@ use Illuminate\Support\Facades\Validator;
 
 class ChatController extends Controller
 {
+    public function getMessages(Request $request, $ticketId)
+    {
+        $ticket = Ticket::forUser($request->user())->find($ticketId);
+
+        if(!$ticket){
+            return response()->json(['errors' => ['message' => 'ticket not found!']], 404);
+        }
+
+        $messages = ChatMessage::where('ticket_id', $ticketId)
+            ->with('user')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        $data =[
+            'status' => true,
+            'messages' => $messages,
+            'message' => 'get all message',
+        ];
+
+        return response()->json($data);
+    }
+
+
+
     public function sendMessage(Request $request, $ticketId)
     {
         $ticket = Ticket::forUser($request->user())->find($ticketId);

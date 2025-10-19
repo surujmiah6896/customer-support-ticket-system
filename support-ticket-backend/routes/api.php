@@ -29,6 +29,7 @@ Route::prefix('v1')->group(function(){
         Route::delete('tickets/{ticketId}/comments/{commentId}', [CommentController::class, 'destroy']);
 
         //chat
+        Route::get('/tickets/{ticketId}/chat', [ChatController::class, 'getMessages']);
         Route::post('tickets/{ticketId}/chat', [ChatController::class, 'sendMessage']);
     });
 });
