@@ -17,8 +17,9 @@ Route::prefix('v1')->group(function(){
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/user', [AuthController::class, 'user']);
 
-        
+
         Route::apiResource('tickets', TicketController::class);
+        Route::post('tickets/{id}', [TicketController::class,'update']);
     });
 });
 

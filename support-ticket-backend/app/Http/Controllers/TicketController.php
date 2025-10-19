@@ -70,4 +70,39 @@ class TicketController extends Controller
         ];
         return response()->json($data);
     }
+
+    public function update(Request $request, $id)
+    {
+        $ticket = Ticket::forUser($request->user())->findOrFail($id);
+
+        // Customers can only update certain fields
+        if ($request->user()->isCustomer()) {
+            $validator = Validator::make($request->all(), [
+                'subject' => 'sometimes|string|max:255',
+                'description' => 'sometimes|string',
+            ]);
+        } else {
+            // Admins can update status and assign tickets
+            $validator = Validator::make($request->all(), [
+                'status' => 'sometimes|in:open,in_progress,resolved,closed',
+                'assigned_admin_id' => 'sometimes|nullable|exists:users,id',
+            ]);
+        }
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $ticket->update($request->all());
+
+        $data = [
+            'status' => true,
+            'ticket' => $ticket->load(['user', 'assignedAdmin']),
+            'message' => 'update successfully',
+        ];
+
+        return response()->json($data);
+    }
+
+
 }
