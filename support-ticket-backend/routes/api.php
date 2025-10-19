@@ -20,6 +20,7 @@ Route::prefix('v1')->group(function(){
 
         Route::apiResource('tickets', TicketController::class);
         Route::post('tickets/{id}', [TicketController::class,'update']);
+        Route::delete('tickets/{id}', [TicketController::class, 'destroy']);
     });
 });
 

@@ -104,5 +104,22 @@ class TicketController extends Controller
         return response()->json($data);
     }
 
+    public function destroy(Request $request, $id)
+    {
+        $ticket = Ticket::forUser($request->user())->findOrFail($id);
+
+        if ($request->user()->isCustomer() && $ticket->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $ticket->delete();
+
+        $data = [
+            'status' => true,
+            'message' => 'Ticket deleted successfully',
+        ];
+
+        return response()->json($data);
+    }
 
 }
