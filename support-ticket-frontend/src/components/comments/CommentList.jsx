@@ -4,7 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { commentsAPI } from "../../services/APIService";
 import { Toast } from "../../utils/toast";
 import { Button } from "../../widgets/Button";
-import { FaPlus } from "react-icons/fa";
+import { FaBicycle, FaComment, FaPlus, FaTrash } from "react-icons/fa";
 
 const CommentList = ({ ticketId, comments, onCommentAdded }) => {
   console.log("comments", comments);
@@ -67,13 +67,59 @@ const CommentList = ({ ticketId, comments, onCommentAdded }) => {
           </div>
           <div className="mt-3 flex justify-end">
             <div>
-                <Button type="submit" disabled={loading || !newComment.trim()}>
+              <Button type="submit" disabled={loading || !newComment.trim()}>
                 {" "}
-                <FaPlus size={20}/>{loading ? "Adding..." : "Add Comment"}{" "}
-                </Button>
+                <FaPlus size={20} />
+                {loading ? "Adding..." : "Add Comment"}{" "}
+              </Button>
             </div>
           </div>
         </form>
+      </div>
+
+      {/* Comments List */}
+      <div className="divide-y divide-gray-200">
+        {comments && comments.length > 0 ? (
+          comments.map((comment) => (
+            <div key={comment.id} className="px-6 py-4">
+              <div className="flex justify-between items-start">
+                <div className="flex items-center space-x-3">
+                  <div className="flex-shrink-0">
+                    <div className="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                      {comment.user?.name?.charAt(0).toUpperCase()}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">
+                      {comment.user?.name}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {new Date(comment.created_at).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+
+                {(user?.isAdmin || comment.user_id === user?.id) && (
+                    <div>
+                        <Button color="bg-red-500" onClick={() => handleDeleteComment(comment.id)}><FaTrash size={20}/></Button>
+                    </div>
+                )}
+              </div>
+              <div className="mt-2">
+                <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                  {comment.content}
+                </p>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="px-6 py-8 flex flex-col items-center">
+            <FaComment size={20} />
+            <p className="text-gray-500">
+              No comments!
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
