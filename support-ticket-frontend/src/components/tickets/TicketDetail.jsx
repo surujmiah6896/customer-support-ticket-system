@@ -9,6 +9,7 @@ import { Button } from "../../widgets/Button";
 import Badge from "../../widgets/Badge";
 import {  FaDoorOpen, FaPlus, FaWindowClose } from "react-icons/fa";
 import CustomerRawInfo from "../../widgets/CustomerRawInfo";
+import CommentList from "../comments/CommentList";
 
 const TicketDetail = () => {
   const { id } = useParams();
@@ -43,8 +44,6 @@ const TicketDetail = () => {
       setError("Failed to update ticket status:" + err);
     }
   };
-
-
 
   if (loading) {
     <Loading/>
@@ -194,6 +193,14 @@ const TicketDetail = () => {
                 </div>
               </div>
             </div>
+          )}
+
+          {activeTab === "comments" && (
+            <CommentList
+              ticketId={id}
+              comments={ticket.comments}
+              onCommentAdded={loadTicket}
+            />
           )}
         </div>
 
