@@ -36,6 +36,7 @@ const CommentList = ({ ticketId, comments, onCommentAdded }) => {
 
     try {
       await commentsAPI.delete(ticketId, commentId);
+      Toast("Delete Successfully!",'delete');
       onCommentAdded();
     } catch (error) {
       console.error("Error deleting comment:", error);

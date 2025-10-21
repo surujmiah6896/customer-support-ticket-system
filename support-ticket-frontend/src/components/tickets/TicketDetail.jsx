@@ -10,6 +10,7 @@ import Badge from "../../widgets/Badge";
 import {  FaDoorOpen, FaPlus, FaWindowClose } from "react-icons/fa";
 import CustomerRawInfo from "../../widgets/CustomerRawInfo";
 import CommentList from "../comments/CommentList";
+import ChatRoom from "../chat/ChatRoom";
 
 const TicketDetail = () => {
   const { id } = useParams();
@@ -202,6 +203,8 @@ const TicketDetail = () => {
               onCommentAdded={loadTicket}
             />
           )}
+
+          {activeTab === "chat" && <ChatRoom ticketId={id} />}
         </div>
 
         {activeTab === "details" && (
