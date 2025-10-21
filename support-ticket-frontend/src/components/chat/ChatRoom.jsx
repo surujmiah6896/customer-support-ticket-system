@@ -6,15 +6,14 @@ import Badge from "../../widgets/Badge";
 import { useAuth } from "../../contexts/AuthContext";
 import pusherService from "../../services/PusherService";
 import { chatAPI } from "../../services/APIService";
-import { data } from "react-router-dom";
 import { formatTime } from "../../utils/formatTime";
 
-const userRole = false;
+
 const ChatRoom = ({ ticketId }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [sending, setSending] = useState(false);
+   const [sending, setSending] = useState(false);
   const [connectionState, setConnectionState] = useState("disconnected");
   const messagesEndRef = useRef(null);
   const { user: authData } = useAuth();
@@ -40,19 +39,27 @@ const ChatRoom = ({ ticketId }) => {
       return { id: null, name: "Unknown User", role: "user" };
     };
 
+    const scrollToBottom = ()=>{
+       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+
+    useEffect(() => {
+      scrollToBottom();
+    }, [messages]);
+
     const isCurrentUserMessage = (message) => {
       if (!message || !currentUser) return false;
       const safeUser = getSafeUser(message);
       return Number(safeUser.id) === Number(currentUser.id);
     };
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-        setConnectionState(pusherService.getConnectionState());
-        }, 1000);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setConnectionState(pusherService.getConnectionState());
+    }, 1000);
 
-        return () => clearInterval(interval);
-    }, []);
+    return () => clearInterval(interval);
+  }, []);
 
    //load messages
    const getAllMessages = async()=>{
@@ -68,42 +75,50 @@ const ChatRoom = ({ ticketId }) => {
    } 
 
    //setup pusher
-   const setupPusher = useCallback(async ()=>{
-        try{
-            const unsubscribe = await pusherService.bindEvent(`ticket_${ticketId}`,"new.chat.message",(data)=>{
-                let messageData = data;
-                if(data.chatMessage){
-                    messageData = data.chatMessage;
-                }
-
-                const safeData = {
-                  ...messageData,
-                  user: getSafeUser(messageData),
-                };
-
-
-                setMessages((prev)=>{
-                    const exist = prev.some((msg) => msg.id === safeData.id);
-                    if(exist){
-                        return prev;
-                    }
-                    return [...prev, safeData];
-                });
-
-                //........
-
-            });
-
-            return unsubscribe;
-        }catch(error){
-            console.log('setting pusher error:', error);
-            return () => {};
+const setupPusher = useCallback(async () => {
+  try {
+    const unsubscribe = await pusherService.bindEvent(
+      `ticket_${ticketId}`,
+      "new.chat.message",
+      (data) => {
+        let messageData = data;
+        if (data.chatMessage) {
+          messageData = data.chatMessage;
         }
-   }, [ticketId, currentUser]);
 
+        const safeData = {
+          ...messageData,
+          user: getSafeUser(messageData),
+        };
 
-   useEffect(()=>{
-    let unsubscribe = ()=>{};
+        setMessages((prev) => {
+          const exists = prev.some((msg) => msg.id === safeData.id);
+          if (exists) return prev;
+          return [...prev, safeData];
+        });
+
+        if (!isCurrentUserMessage(safeData)) {
+          markMessagesAsRead();
+        }
+      }
+    );
+
+    return unsubscribe;
+  } catch (error) {
+    return () => {};
+  }
+}, [ticketId, currentUser]);
+
+   const markMessagesAsRead = async () => {
+     try {
+       await chatAPI.markAsRead(ticketId);
+     } catch (error) {
+       console.error("Error marking messages as read:", error);
+     }
+   };
+
+  useEffect(() => {
+    let unsubscribe = () => {};
 
     const initializeChat = async () => {
       await getAllMessages();
@@ -112,65 +127,67 @@ const ChatRoom = ({ ticketId }) => {
 
     initializeChat();
 
-    return ()=>{
-        unsubscribe();
-        pusherService.unsubscribe(`ticket_${ticketId}`);
+    return () => {
+      unsubscribe();
+      pusherService.unsubscribe(`ticket_${ticketId}`);
     };
-   },[setupPusher, ticketId]);
+  }, [setupPusher, ticketId]);
 
 
-  const sendMessage = async(e)=>{
-    e.preventDefault();
-    if(!newMessage.trim()){
-        return
-    }
+   const sendMessage = async (e) => {
+     e.preventDefault();
+     if (!newMessage.trim()) return;
 
-    setSending(true);
-    try {
-        const safeUserData = {
-            id: currentUser?.id || null,
-            name: currentUser?.name || "you",
-            role: currentUser?.role || 'user',
-        }
+     
+     setSending(true);
+     try {
+       const safeUserData = {
+         id: currentUser?.id || null,
+         name: currentUser?.name || "You",
+         role: currentUser?.role || "user",
+       };
 
-        const tempMessage = {
-          id: `temp-${Date.now()}`,
-          message: newMessage,
-          user: safeUserData,
-          ticket_id: parseInt(ticketId),
-          created_at: new Date().toISOString(),
-          is_read: false,
-          isTemp: true,
-        };
+       const tempMessage = {
+         id: `temp-${Date.now()}`,
+         message: newMessage,
+         user: safeUserData,
+         ticket_id: parseInt(ticketId),
+         created_at: new Date().toISOString(),
+         is_read: false,
+         isTemp: true,
+       };
 
-        setMessages((prev) => [...prev, tempMessage]);
-        setNewMessage("");
+       setMessages((prev) => [...prev, tempMessage]);
+       setNewMessage("");
 
-        const res = await chatAPI.sendMessage(ticketId, newMessage);
-        const chatMessage = res.data;
-        const safeRespData = {
-            ...chatMessage,
-            user: getSafeUser(chatMessage),
-            isTemp:false,
-        } 
+       const response = await chatAPI.sendMessage(ticketId, newMessage);
 
-        setMessages((prev) =>
-          prev.map((msg) => (msg.id === tempMessage.id ? safeRespData : msg))
-        );
-    } catch (error) {
-      console.error("Error sending message:", error);
-      setMessages((prev) => prev.filter((msg) => !msg.isTemp));
-    } finally {
-      setSending(false);
-    }
-  }
+       const chatMessage = response.data;
+       const safeResponseData = {
+         ...chatMessage,
+         user: getSafeUser(chatMessage),
+         isTemp: false,
+       };
 
-  const renderMessage = (message)=>{
-    if(!message || !currentUser){
-        return null;
-    }
+       setMessages((prev) =>
+         prev.map((msg) => (msg.id === tempMessage.id ? safeResponseData : msg))
+       );
+     } catch (error) {
+       console.error("Error sending message:", error);
+       setMessages((prev) => prev.filter((msg) => !msg.isTemp));
+     } finally {
+       setSending(false);
+     }
+   };
+
+
+  const renderMessage = (message) => {
+    if (!message || !currentUser) return null;
+    
     const isCurrentUser = isCurrentUserMessage(message);
     const safeUser = getSafeUser(message);
+
+     
 
     return (
       <div
@@ -183,15 +200,15 @@ const ChatRoom = ({ ticketId }) => {
           className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
             isCurrentUser
               ? "bg-blue-600 text-white rounded-br-none"
-              : "bg-gray-100 text-gray-900 rounded-bl-none"
+              : "bg-gray-500 text-white rounded-bl-none"
           } ${message.isTemp ? "opacity-70 animate-pulse" : ""}`}
         >
           {!isCurrentUser && (
             <div className="flex items-center space-x-2 mb-1">
-              <span className="text-xs font-medium text-gray-600">
+              <span className="text-xs font-medium text-white">
                 {safeUser.name}
               </span>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-white">
                 ({safeUser.role || "user"})
               </span>
             </div>
@@ -206,7 +223,7 @@ const ChatRoom = ({ ticketId }) => {
 
             <span
               className={`text-xs ${
-                isCurrentUser ? "text-blue-300" : "text-gray-500"
+                isCurrentUser ? "text-blue-300" : "text-white"
               }`}
             >
               {formatTime(message.created_at)}
@@ -217,7 +234,7 @@ const ChatRoom = ({ ticketId }) => {
         </div>
       </div>
     );
-  }
+  };
 
 
   return (
@@ -229,9 +246,10 @@ const ChatRoom = ({ ticketId }) => {
               Real-time Chat
             </h3>
             <p className="text-sm text-gray-500">
-              Chat with Role
+              Chat with{" "}
+              {currentUser?.role === "admin" ? "customer" : "support team"}
               <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                30 messages
+                {messages.length} messages
               </span>
             </p>
           </div>
@@ -253,7 +271,7 @@ const ChatRoom = ({ ticketId }) => {
         </div>
       </div>
 
-    {/* render message */}
+      {/* render message */}
       <div className="flex-1 overflow-y-auto p-4">
         {loading ? (
           <div className="flex justify-center items-center h-32">
@@ -264,12 +282,11 @@ const ChatRoom = ({ ticketId }) => {
           messages.map(renderMessage)
         ) : (
           <div className="text-center flex flex-col items-center py-8">
-            <FaMailBulk size={20}/>
-            <p className="text-gray-500">
-              No messages!
-            </p>
+            <FaMailBulk size={20} />
+            <p className="text-gray-500">No messages!</p>
           </div>
         )}
+        <div ref={messagesEndRef} />
       </div>
 
       <div className="border-t border-gray-200 p-4 bg-gray-50">
@@ -279,7 +296,7 @@ const ChatRoom = ({ ticketId }) => {
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder={
-              userRole
+              currentUser?.role === "admin"
                 ? "Type a message to customer..."
                 : "Type your message to support..."
             }

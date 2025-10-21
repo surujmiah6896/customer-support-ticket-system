@@ -1,10 +1,15 @@
+
 export const formatTime = (dateString) => {
   try {
-    return new Date(dateString).toLocaleTimeString([], {
+    const date = new Date(dateString);
+
+    return date.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
+      hour12: true, 
     });
   } catch (error) {
-    return "Invalid Date";
+    console.error("Invalid date format:", dateString, error);
+    return "Invalid Time";
   }
 };

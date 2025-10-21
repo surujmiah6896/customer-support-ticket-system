@@ -27,7 +27,7 @@ class PusherService {
       }
 
       if (this.pusher) {
-        this.discount();
+        this.disconnect();
       }
 
       //   create pusher instance
