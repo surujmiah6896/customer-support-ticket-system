@@ -11,6 +11,7 @@ import Register from "./components/auth/Register";
 import { ToastContainer } from "react-toastify";
 import TicketList from "./components/tickets/TicketList";
 import Navbar from "./components/layout/Navbar";
+import TicketDetail from "./components/tickets/TicketDetail";
 
 
 
@@ -20,16 +21,17 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="App min-h-screen bg-gray-50">
-          <Navbar/>
+          <Navbar />
           <ToastContainer />
           <main>
             <Routes>
               <Route path="/" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/dashboard" element={<TicketList />} />
               <Route
-                path="/dashboard"
+                path="/tickets/:id"
                 element={
-                    <TicketList />
+                    <TicketDetail />
                 }
               />
             </Routes>
