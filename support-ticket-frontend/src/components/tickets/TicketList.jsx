@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import TicketForm from "./TicketForm";
 import { ticketsAPI } from "../../services/APIService";
 import { FaTicketAlt } from "react-icons/fa";
 import Loading from "../../widgets/Loading";
@@ -105,7 +106,11 @@ const TicketList = () => {
         )}
       </div>
 
-    
+      <TicketForm
+        show={showForm}
+        onHide={() => setShowForm(false)}
+        onTicketCreated={loadTickets}
+      />
     </div>
   );
 };
