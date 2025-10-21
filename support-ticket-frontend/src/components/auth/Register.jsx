@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form";
 import { FormGroup } from "../../widgets/FromGroup";
 import { Button } from "../../widgets/Button";
 import { FaUserPlus } from "react-icons/fa";
+import { Toast } from "../../utils/toast";
+
 
 const Register = () => {
   const {
@@ -20,9 +22,11 @@ const Register = () => {
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
+    
     try {
       setError("");
-      await handleRegister(data); 
+      await handleRegister(data);
+      Toast('register successful!');
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to create account");

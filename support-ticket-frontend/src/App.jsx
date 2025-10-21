@@ -8,6 +8,8 @@ import {
 import { AuthProvider } from "./contexts/AuthContext";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
+import { ToastContainer } from "react-toastify";
+import TicketList from "./components/tickets/TicketList";
 
 
 
@@ -17,10 +19,17 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="App min-h-screen bg-gray-50">
+          <ToastContainer />
           <main>
             <Routes>
               <Route path="/" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route
+                path="/dashboard"
+                element={
+                    <TicketList />
+                }
+              />
             </Routes>
           </main>
         </div>

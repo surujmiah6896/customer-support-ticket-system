@@ -1,5 +1,5 @@
-import api from "../src/utils/api.js";
 
+import api from '../utils/api'
 
 //auth api endpoints
 export const authAPI = {

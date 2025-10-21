@@ -5,6 +5,7 @@ import { FormGroup } from "../../widgets/FromGroup";
 import { Button } from "../../widgets/Button";
 import { useForm } from "react-hook-form";
 import { FaSignInAlt } from "react-icons/fa";
+import { Toast } from "../../utils/toast";
 
 const Login = () => {
   const {
@@ -21,6 +22,7 @@ const Login = () => {
     try {
       setError("");
       await login(data); 
+      Toast('login successful!');
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to login");
