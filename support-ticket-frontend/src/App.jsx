@@ -10,6 +10,7 @@ import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import { ToastContainer } from "react-toastify";
 import TicketList from "./components/tickets/TicketList";
+import Navbar from "./components/layout/Navbar";
 
 
 
@@ -19,6 +20,7 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="App min-h-screen bg-gray-50">
+          <Navbar/>
           <ToastContainer />
           <main>
             <Routes>

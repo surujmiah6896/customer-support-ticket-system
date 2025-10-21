@@ -7,6 +7,7 @@ import { ticketsAPI } from "../../services/APIService";
 import { FaTicketAlt } from "react-icons/fa";
 import Loading from "../../widgets/Loading";
 import Badge from "../../widgets/Badge";
+import { Button } from "../../widgets/Button";
 
 const TicketList = () => {
   const [tickets, setTickets] = useState([]);
@@ -34,16 +35,15 @@ const TicketList = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
       <div className="mb-6 flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">Support Tickets</h1>
         {!user?.isAdmin && (
-          <button
-            onClick={() => setShowForm(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
-          >
-            Create New Ticket
-          </button>
+          <div className="w-[80]">
+            <Button color="bg-blue-600" onClick={() => setShowForm(true)}>
+              Create New Ticket
+            </Button>
+          </div>
         )}
       </div>
 
