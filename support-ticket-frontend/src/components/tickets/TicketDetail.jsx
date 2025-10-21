@@ -8,6 +8,7 @@ import Error from "../../widgets/Error";
 import { Button } from "../../widgets/Button";
 import Badge from "../../widgets/Badge";
 import {  FaDoorOpen, FaPlus, FaWindowClose } from "react-icons/fa";
+import CustomerRawInfo from "../../widgets/CustomerRawInfo";
 
 const TicketDetail = () => {
   const { id } = useParams();
@@ -154,41 +155,25 @@ const TicketDetail = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-500">
-                        Customer
-                      </h4>
-                      <p className="mt-1 text-sm text-gray-900">
-                        {ticket.user?.name}
-                      </p>
-                    </div>
+                    <CustomerRawInfo
+                      title={"Customer"}
+                      value={ticket.user?.name}
+                    />
 
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-500">
-                        Assigned Admin
-                      </h4>
-                      <p className="mt-1 text-sm text-gray-900">
-                        {ticket.assigned_admin?.name || "Not assigned"}
-                      </p>
-                    </div>
+                    <CustomerRawInfo
+                      title={"Assigned Admin"}
+                      value={ticket.assigned_admin?.name}
+                    />
 
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-500">
-                        Created
-                      </h4>
-                      <p className="mt-1 text-sm text-gray-900">
-                        {new Date(ticket.created_at).toLocaleString()}
-                      </p>
-                    </div>
+                    <CustomerRawInfo
+                      title={"Created"}
+                      value={new Date(ticket.created_at).toLocaleString()}
+                    />
 
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-500">
-                        Last Updated
-                      </h4>
-                      <p className="mt-1 text-sm text-gray-900">
-                        {new Date(ticket.updated_at).toLocaleString()}
-                      </p>
-                    </div>
+                    <CustomerRawInfo
+                      title={"Last Updated"}
+                      value={new Date(ticket.updated_at).toLocaleString()}
+                    />
 
                     {ticket.attachment && (
                       <div>
@@ -210,8 +195,6 @@ const TicketDetail = () => {
               </div>
             </div>
           )}
-
-         
         </div>
 
         {activeTab === "details" && (
