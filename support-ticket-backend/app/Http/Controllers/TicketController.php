@@ -66,7 +66,7 @@ class TicketController extends Controller
         $ticket = Ticket::forUser($request->user())->findOrFail($id);
         $data = [
             'status' => true,
-            'ticket' => $ticket->load(['user', 'assignedAdmin']),
+            'ticket' => $ticket->load(['user', 'assignedAdmin', 'comments.user', 'chatMessages.user']),
         ];
         return response()->json($data);
     }

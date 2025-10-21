@@ -42,4 +42,14 @@ class Ticket extends Model
         }
         return $query->where('user_id', $user->id);
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function chatMessages()
+    {
+        return $this->hasMany(ChatMessage::class);
+    }
 }

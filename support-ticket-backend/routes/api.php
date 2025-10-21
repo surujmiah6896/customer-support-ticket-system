@@ -31,6 +31,7 @@ Route::prefix('v1')->group(function(){
         //chat
         Route::get('/tickets/{ticketId}/chat', [ChatController::class, 'getMessages']);
         Route::post('tickets/{ticketId}/chat', [ChatController::class, 'sendMessage']);
+        Route::post('tickets/{ticketId}/chat/mark-read', [ChatController::class, 'markAsRead']);
     });
 });
 

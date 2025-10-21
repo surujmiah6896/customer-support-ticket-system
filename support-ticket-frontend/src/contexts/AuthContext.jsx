@@ -17,15 +17,30 @@ export const AuthProvider = ({children}) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(()=>{
-        const token = localStorage.getItem('token');
-        if(token){
-            authAPI.getUser().then(res=>{setUser(res.data);}).catch(()=>{localStorage.removeItem('token')}).finally(()=>{
-                setLoading(false);
-            })
-        }else{
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        authAPI
+          .getUser()
+          .then((response) => {
+            // Your API returns {status: true, user: {...}, message: '...'}
+            // So we need to extract the user object
+            console.log("Auth response:", response.data);
+            if (response.data && response.data.user) {
+              setUser(response.data.user); // Set the nested user object
+            } else {
+              setUser(response.data); // Fallback if no nesting
+            }
+          })
+          .catch(() => {
+            localStorage.removeItem("token");
+          })
+          .finally(() => {
             setLoading(false);
-        }
+          });
+      } else {
+        setLoading(false);
+      }
     }, []);
 
     const login = async (credentials) =>{
@@ -48,7 +63,7 @@ export const AuthProvider = ({children}) => {
 
     const logout = async () => {
       await authAPI.logout();
-      localStorage.removeItem("access_token");
+      localStorage.removeItem("token");
       setUser(null);
     };
 
