@@ -73,6 +73,7 @@ class PusherService {
         console.log("pusher state changed:", states);
         this.connectionState = states.current;
       });
+
       this.checkAuthentication();
 
       console.log("Pusher initialized successfully");
@@ -92,22 +93,25 @@ class PusherService {
       console.error("not found in localStorage");
       return false;
     }
+    if (token.split(".").length === 3) {
+      try {
+        const parts = token.split(".");
+        const payload = JSON.parse(atob(parts[1]));
+        const isExpired = payload.exp * 1000 < Date.now();
 
-    try {
-      const parts = token.split(".");
-      const payload = JSON.parse(atob(parts[1]));
-      const isExpired = payload.exp * 1000 < Date.now();
+        if (isExpired) {
+          console.error("expired at:", new Date(payload.exp * 1000));
+          return false;
+        }
 
-      if (isExpired) {
-        console.error("expired at:", new Date(payload.exp * 1000));
+        console.log("Valid token:", payload);
+        return true;
+      } catch (error) {
+        console.error("Token validation error:", error);
         return false;
       }
-
-      console.log("Valid token:", payload);
-      return true;
-    } catch (error) {
-      console.error("Token validation error:", error);
-      return false;
+    }else{
+        return true;
     }
   }
 
@@ -241,9 +245,12 @@ class PusherService {
   isConnected() {
     return this.pusher && this.connectionState === "connected";
   }
+
+  getConnectionState() {
+    return this.connectionState;
+  }
 }
 
 const pusherService = new PusherService();
-
 
 export default pusherService;

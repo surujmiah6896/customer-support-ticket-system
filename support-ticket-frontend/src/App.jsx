@@ -16,7 +16,6 @@ import { PusherWrapper } from "./contexts/PusherWrapper";
 
 
 
-
 function App() {
   return (
     <AuthProvider>
