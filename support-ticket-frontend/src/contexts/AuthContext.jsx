@@ -23,13 +23,12 @@ export const AuthProvider = ({children}) => {
         authAPI
           .getUser()
           .then((response) => {
-            // Your API returns {status: true, user: {...}, message: '...'}
-            // So we need to extract the user object
+            
             console.log("Auth response:", response.data);
             if (response.data && response.data.user) {
-              setUser(response.data.user); // Set the nested user object
+              setUser(response.data.user); 
             } else {
-              setUser(response.data); // Fallback if no nesting
+              setUser(response.data); 
             }
           })
           .catch(() => {

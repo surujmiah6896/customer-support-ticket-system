@@ -2,7 +2,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "../../widgets/Button";
 import { FaArrowCircleUp, FaMailBulk } from "react-icons/fa";
-import Badge from "../../widgets/Badge";
 import { useAuth } from "../../contexts/AuthContext";
 import pusherService from "../../services/PusherService";
 import { chatAPI } from "../../services/APIService";
@@ -92,8 +91,18 @@ const setupPusher = useCallback(async () => {
         };
 
         setMessages((prev) => {
-          const exists = prev.some((msg) => msg.id === safeData.id);
-          if (exists) return prev;
+          const hasTempWithSameContent = prev.some(
+            (msg) => msg.isTemp && msg.message === safeData.message
+          );
+
+          if (hasTempWithSameContent) {
+            return prev;
+          }
+
+          const existsById = prev.some((msg) => msg.id === safeData.id);
+          if (existsById) {
+            return prev;
+          }
           return [...prev, safeData];
         });
 
@@ -105,6 +114,8 @@ const setupPusher = useCallback(async () => {
 
     return unsubscribe;
   } catch (error) {
+    console.log('setup pusher error', error);
+    
     return () => {};
   }
 }, [ticketId, currentUser]);
@@ -200,7 +211,7 @@ const setupPusher = useCallback(async () => {
           className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
             isCurrentUser
               ? "bg-blue-600 text-white rounded-br-none"
-              : "bg-gray-500 text-white rounded-bl-none"
+              : "bg-gray-400 text-white rounded-bl-none"
           } ${message.isTemp ? "opacity-70 animate-pulse" : ""}`}
         >
           {!isCurrentUser && (

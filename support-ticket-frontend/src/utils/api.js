@@ -35,8 +35,8 @@ api.interceptors.response.use(
     // Handle expired token
     if (response.status === 401) {
       localStorage.removeItem("token");
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login";
+      if (window.location.pathname !== "/") {
+        window.location.href = "/";
       }
     }
 
