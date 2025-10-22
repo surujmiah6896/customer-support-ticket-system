@@ -1,5 +1,4 @@
-// src/App.js - Add this useEffect for Pusher cleanup
-import React from "react";
+
 import {
   BrowserRouter as Router,
   Routes,
