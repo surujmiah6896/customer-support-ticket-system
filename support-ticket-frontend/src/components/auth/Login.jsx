@@ -30,8 +30,8 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full bg-white rounded-md space-y-8 p-4 shadow-2xl">
+    <div className="min-h-screen flex items-center justify-center bg-white py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full bg-indigo-100 rounded-md space-y-8 p-4 shadow-2xl">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Welcome
@@ -46,7 +46,7 @@ const Login = () => {
             </div>
           )}
 
-          <div className="rounded-md shadow-sm -space-y-px">
+          <div className="rounded-md">
             <FormGroup
               label={"Email"}
               type="email"
@@ -59,6 +59,7 @@ const Login = () => {
               })}
               error={errors.email}
               placeholder={"Enter Email"}
+              requiredStatus={true}
             />
 
             <FormGroup
@@ -73,6 +74,7 @@ const Login = () => {
               })}
               error={errors.password}
               placeholder={"Enter Password"}
+              requiredStatus={true}
             />
           </div>
 

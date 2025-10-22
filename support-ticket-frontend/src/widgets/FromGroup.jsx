@@ -1,6 +1,7 @@
 
 export const FormGroup = ({
   label,
+  requiredStatus = false,
   error,
   type = "text",
   options = [],
@@ -17,7 +18,7 @@ export const FormGroup = ({
         return (
           <select
             className={`${baseClasses} bg-white cursor-pointer`}
-            style={{ appearance: "menulist" }} 
+            style={{ appearance: "menulist" }}
             {...inputProps}
           >
             <option value="">Select {label}</option>
@@ -57,7 +58,7 @@ export const FormGroup = ({
   return (
     <div className="mb-4">
       <label className="block text-gray-700 text-sm font-bold mb-2">
-        {label}
+        {label} {requiredStatus && <span className="text-red-600">*</span>}
       </label>
       {renderInput()}
       {error && <p className="text-red-500 text-xs mt-1">{error.message}</p>}

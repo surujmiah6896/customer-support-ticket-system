@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import TicketForm from "./TicketForm";
@@ -9,7 +9,7 @@ import Badge from "../../widgets/Badge";
 import { Button } from "../../widgets/Button";
 import { Toast } from "../../utils/toast";
 import ConfirmationModal from "./ConfirmationModal";
-// import ConfirmationModal from "../../widgets/ConfirmationModal"; // New component
+import CountStatus from "../../widgets/CountStatus";
 
 const TicketList = () => {
   const [tickets, setTickets] = useState([]);
@@ -92,7 +92,29 @@ const TicketList = () => {
   return (
     <div className="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
       <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Support Tickets</h1>
+        <div className="flex items-center space-x-6">
+          <h1 className="text-3xl font-bold text-gray-900">Support Tickets</h1>
+
+          {/* Status-wise counts */}
+          <div className="flex items-center space-x-4">
+            <CountStatus tickets={tickets} title={"Open"} type={"open"} />
+
+            <CountStatus
+              tickets={tickets}
+              title={"In Progress"}
+              type={"in_progress"}
+            />
+
+            <CountStatus
+              tickets={tickets}
+              title={"Resolved"}
+              type={"resolved"}
+            />
+
+            <CountStatus tickets={tickets} title={"Closed"} type={"closed"} />
+          </div>
+        </div>
+
         {!user?.isAdmin && (
           <div className="w-[80]">
             <Button color="bg-blue-600" onClick={() => setShowForm(true)}>
@@ -239,7 +261,6 @@ const TicketList = () => {
         onTicketCreated={loadTickets}
         editTicket={editingTicket}
         onTicketUpdated={handleUpdateTicket}
-        
       />
 
       {/* delete modal */}

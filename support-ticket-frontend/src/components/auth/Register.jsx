@@ -36,8 +36,8 @@ const Register = () => {
   const password = watch("password"); 
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full bg-white rounded-md space-y-8 p-6 shadow-2xl">
+    <div className="min-h-screen flex items-center justify-center bg-white py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full bg-indigo-100 rounded-md space-y-8 p-6 shadow-2xl">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Welcome
@@ -65,6 +65,7 @@ const Register = () => {
               })}
               error={errors.name}
               placeholder={"Enter your name"}
+              requiredStatus={true}
             />
 
             <FormGroup
@@ -79,6 +80,7 @@ const Register = () => {
               })}
               error={errors.email}
               placeholder={"Enter your email"}
+              requiredStatus={true}
             />
 
             <FormGroup
@@ -93,6 +95,7 @@ const Register = () => {
               })}
               error={errors.password}
               placeholder={"Enter password"}
+              requiredStatus={true}
             />
 
             <FormGroup
@@ -105,6 +108,7 @@ const Register = () => {
               })}
               error={errors.password_confirmation}
               placeholder={"Confirm your password"}
+              requiredStatus={true}
             />
           </div>
 

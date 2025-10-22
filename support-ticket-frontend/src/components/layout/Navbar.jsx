@@ -14,7 +14,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-lg ">
+    <nav className="bg-indigo-100 border-s">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
@@ -47,7 +47,9 @@ const Navbar = () => {
                 </span>
               </div>
               <div>
-                <Button onClick={handleLogout}><FaSignOutAlt/> Logout</Button>
+                <Button onClick={handleLogout}>
+                  <FaSignOutAlt /> Logout
+                </Button>
               </div>
             </div>
           )}

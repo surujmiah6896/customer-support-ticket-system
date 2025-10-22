@@ -119,6 +119,7 @@ const TicketForm = ({
               })}
               error={errors.subject}
               placeholder={"Enter subject"}
+              requiredStatus={true}
             />
 
             <FormGroup
@@ -134,6 +135,7 @@ const TicketForm = ({
               })}
               error={errors.description}
               placeholder={"Enter description"}
+              requiredStatus={true}
             />
 
             <div className="grid grid-cols-2 gap-4">
@@ -148,6 +150,7 @@ const TicketForm = ({
                   { value: "general", label: "General" },
                   { value: "support", label: "Support" },
                 ]}
+                requiredStatus={true}
               />
 
               <FormGroup
@@ -161,24 +164,24 @@ const TicketForm = ({
                   { value: "high", label: "High" },
                   { value: "urgent", label: "Urgent" },
                 ]}
+                requiredStatus={true}
               />
             </div>
 
-            {isEditing &&
-              user?.role == 'admin' && (
-                <FormGroup
-                  label={"Status"}
-                  type="select"
-                  {...register("status", { required: "Status is required" })}
-                  error={errors.status}
-                  options={[
-                    { value: "open", label: "Open" },
-                    { value: "in_progress", label: "In Progress" },
-                    { value: "resolved", label: "Resolved" },
-                    { value: "closed", label: "Closed" },
-                  ]}
-                />
-              )}
+            {isEditing && user?.role == "admin" && (
+              <FormGroup
+                label={"Status"}
+                type="select"
+                {...register("status", { required: "Status is required" })}
+                error={errors.status}
+                options={[
+                  { value: "open", label: "Open" },
+                  { value: "in_progress", label: "In Progress" },
+                  { value: "resolved", label: "Resolved" },
+                  { value: "closed", label: "Closed" },
+                ]}
+              />
+            )}
 
             <FormGroup
               label={"Attachment"}
@@ -196,10 +199,12 @@ const TicketForm = ({
 
             <div className="flex justify-end space-x-3 pt-4">
               <Button type="button" color="bg-gray-500" onClick={handleCancel}>
-               <FaTimes /> Cancel
+                <FaTimes /> Cancel
               </Button>
 
-              <Button type="submit" disabled={isSubmitting}> <FaPlus/>
+              <Button type="submit" disabled={isSubmitting}>
+                {" "}
+                <FaPlus />
                 {isSubmitting
                   ? isEditing
                     ? "Updating..."
