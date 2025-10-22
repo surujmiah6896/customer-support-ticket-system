@@ -18,7 +18,13 @@ export const ticketsAPI = {
     api.post("/tickets", data, {
       headers: { "Content-Type": "multipart/form-data" },
     }),
-  update: (id, data) => api.put(`/tickets/${id}`, data),
+  update: (id, data) => {
+    const config =
+      data instanceof FormData
+        ? { headers: { "Content-Type": "multipart/form-data" } }
+        : {};
+    return api.post(`/tickets/${id}`, data, config);
+  },
   delete: (id) => api.delete(`/tickets/${id}`),
 };
 
@@ -36,8 +42,7 @@ export const chatAPI = {
 
     console.log("Get messages response:", response.data);
 
-    // Handle your API response structure: { status: true, messages: [], message: '...' }
-    let messages = [];
+     let messages = [];
 
     if (
       response.data &&
@@ -76,8 +81,7 @@ export const chatAPI = {
     });
 
     console.log("Send message full response:", response.data);
-
-    // Your API returns: { status: true, chatMessage: {...}, message: '...' }
+    
     let chatMessage = null;
 
     if (response.data && response.data.chatMessage) {

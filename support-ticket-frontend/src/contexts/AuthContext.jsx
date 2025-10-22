@@ -23,7 +23,6 @@ export const AuthProvider = ({children}) => {
         authAPI
           .getUser()
           .then((response) => {
-            
             console.log("Auth response:", response.data);
             if (response.data && response.data.user) {
               setUser(response.data.user); 

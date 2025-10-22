@@ -1,23 +1,51 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ticketsAPI } from "../../services/APIService";
 import { useForm } from "react-hook-form";
 import { FormGroup } from "../../widgets/FromGroup";
 import { Button } from "../../widgets/Button";
 import { Toast } from '../../utils/toast';
+import { useAuth } from "../../contexts/AuthContext";
+import { FaPlus, FaTimes } from "react-icons/fa";
 
-const TicketForm = ({ show, onHide, onTicketCreated }) => {
+const TicketForm = ({
+  show,
+  onHide,
+  onTicketCreated,
+  editTicket = null,
+  onTicketUpdated,
+}) => {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
+    setValue,
   } = useForm();
 
   const [error, setError] = useState("");
   const [attachment, setAttachment] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (show) {
+      if (editTicket) {
+        setIsEditing(true);
+        setValue("subject", editTicket.subject);
+        setValue("description", editTicket.description);
+        setValue("category", editTicket.category);
+        setValue("priority", editTicket.priority);
+        setValue("status", editTicket.status);
+      } else {
+        setIsEditing(false);
+        reset();
+        setAttachment(null);
+      }
+      setError("");
+    }
+  }, [show, editTicket, reset, setValue]);
 
   const onSubmit = async (data) => {
-   
     try {
       setError("");
 
@@ -32,13 +60,20 @@ const TicketForm = ({ show, onHide, onTicketCreated }) => {
       if (attachment) {
         submitData.append("attachment", attachment);
       }
+      
+      if (isEditing && editTicket) {
+        await ticketsAPI.update(editTicket.id, submitData);
+        onTicketUpdated?.();
+        Toast("Ticket Updated Successfully!");
+      } else {
+        await ticketsAPI.create(submitData);
+        onTicketCreated?.();
+        Toast("Ticket Created Successfully!");
+      }
 
-      await ticketsAPI.create(submitData);
-      onTicketCreated();
       reset();
       setAttachment(null);
       onHide();
-      Toast('Ticket Create Successfully!');
     } catch (err) {
       setError(err.response?.data?.message || "Failed to create ticket");
     }
@@ -58,11 +93,11 @@ const TicketForm = ({ show, onHide, onTicketCreated }) => {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 bg-transparent bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm overflow-y-auto h-full w-full z-50">
       <div className="relative top-20 mx-auto p-5 border border-zinc-300 w-full max-w-2xl shadow-lg rounded-md bg-white">
         <div className="mt-3">
           <h3 className="text-lg font-medium text-gray-900 mb-4">
-            Create New Ticket
+            {isEditing ? "Edit Ticket" : "Create New Ticket"}
           </h3>
 
           {error && (
@@ -129,6 +164,22 @@ const TicketForm = ({ show, onHide, onTicketCreated }) => {
               />
             </div>
 
+            {isEditing &&
+              user?.role == 'admin' && (
+                <FormGroup
+                  label={"Status"}
+                  type="select"
+                  {...register("status", { required: "Status is required" })}
+                  error={errors.status}
+                  options={[
+                    { value: "open", label: "Open" },
+                    { value: "in_progress", label: "In Progress" },
+                    { value: "resolved", label: "Resolved" },
+                    { value: "closed", label: "Closed" },
+                  ]}
+                />
+              )}
+
             <FormGroup
               label={"Attachment"}
               type="file"
@@ -136,18 +187,27 @@ const TicketForm = ({ show, onHide, onTicketCreated }) => {
               error={null}
             />
 
+            {isEditing && editTicket?.attachment && (
+              <div className="text-sm text-gray-600">
+                <p>Current Attachment: {editTicket.attachment}</p>
+                <p className="text-xs text-gray-500">Upload a attachment</p>
+              </div>
+            )}
+
             <div className="flex justify-end space-x-3 pt-4">
               <Button type="button" color="bg-gray-500" onClick={handleCancel}>
-                Cancel
+               <FaTimes /> Cancel
               </Button>
 
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Creating..." : "Create Ticket"}
+              <Button type="submit" disabled={isSubmitting}> <FaPlus/>
+                {isSubmitting
+                  ? isEditing
+                    ? "Updating..."
+                    : "Creating..."
+                  : isEditing
+                  ? "Update Ticket"
+                  : "Create Ticket"}
               </Button>
-              
             </div>
           </form>
         </div>
