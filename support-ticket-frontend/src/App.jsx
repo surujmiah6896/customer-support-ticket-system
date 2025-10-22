@@ -13,6 +13,7 @@ import TicketList from "./components/tickets/TicketList";
 import Navbar from "./components/layout/Navbar";
 import TicketDetail from "./components/tickets/TicketDetail";
 import { PusherWrapper } from "./contexts/PusherWrapper";
+import { ProtectedRoute } from "./widgets/ProtectedRoute";
 
 
 
@@ -28,11 +29,17 @@ function App() {
               <Routes>
                 <Route path="/" element={<Login />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/dashboard" element={<TicketList />} />
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <TicketList />
+                  </ProtectedRoute>
+                  } />
                 <Route
                   path="/tickets/:id"
                   element={
+                    <ProtectedRoute>
                       <TicketDetail />
+                    </ProtectedRoute>
                   }
                 />
               </Routes>
