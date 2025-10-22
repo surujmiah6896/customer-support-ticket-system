@@ -89,6 +89,13 @@ const TicketList = () => {
     return <Loading />;
   }
 
+  const status = [
+    { title: "Open", type: "open" },
+    { title: "In Progress", type: "in_progress" },
+    { title: "Resolved", type: "resolved" },
+    { title: "Closed", type: "closed" },
+  ];
+
   return (
     <div className="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
       <div className="mb-6 flex justify-between items-center">
@@ -97,21 +104,16 @@ const TicketList = () => {
 
           {/* Status-wise counts */}
           <div className="flex items-center space-x-4">
-            <CountStatus tickets={tickets} title={"Open"} type={"open"} />
-
-            <CountStatus
-              tickets={tickets}
-              title={"In Progress"}
-              type={"in_progress"}
-            />
-
-            <CountStatus
-              tickets={tickets}
-              title={"Resolved"}
-              type={"resolved"}
-            />
-
-            <CountStatus tickets={tickets} title={"Closed"} type={"closed"} />
+            {status && status.length > 0
+              ? status.map((item, index) => (
+                  <CountStatus
+                    key={index}
+                    tickets={tickets}
+                    title={item.title}
+                    type={item.type}
+                  />
+                ))
+              : " "}
           </div>
         </div>
 
