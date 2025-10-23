@@ -112,7 +112,7 @@ const TicketList = () => {
     <div className="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
       <div className="mb-6">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
               Support Tickets
             </h1>
@@ -120,20 +120,20 @@ const TicketList = () => {
             <div className="flex flex-wrap gap-2 sm:gap-4">
               {status && status.length > 0
                 ? status.map((item, index) => (
-                    <CountStatus
-                      key={index}
-                      tickets={tickets}
-                      title={item.title}
-                      type={item.type}
-                      compact={window.innerWidth < 640} 
-                    />
+                    <div key={index} className="text-sm sm:text-base">
+                      <CountStatus
+                        tickets={tickets}
+                        title={item.title}
+                        type={item.type}
+                      />
+                    </div>
                   ))
                 : " "}
             </div>
           </div>
 
           {!user?.isAdmin && (
-            <div className="sm:self-start">
+            <div className="sm:self-start w-full sm:w-auto">
               <Button
                 color="bg-blue-600"
                 onClick={() => setShowForm(true)}
@@ -183,7 +183,6 @@ const TicketList = () => {
                     </div>
                   </div>
 
-                  {/* Row 2: Meta info and priority */}
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3 text-xs text-gray-600">
                       <span>{ticket.category}</span>
@@ -195,7 +194,6 @@ const TicketList = () => {
                       )}
                     </div>
 
-                    {/* action buttons */}
                     <div className="flex items-center gap-1">
                       <Link
                         to={`/tickets/${ticket.id}`}
@@ -224,7 +222,6 @@ const TicketList = () => {
                         </>
                       )}
                     </div>
-                      
                   </div>
 
                   <div className="flex flex-col xs:flex-row xs:justify-between xs:items-center gap-1">

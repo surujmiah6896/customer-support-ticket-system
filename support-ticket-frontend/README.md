@@ -84,15 +84,22 @@ cd ticket-system
 ```bash
 #Change directory into backend
 cd support-ticket-backend
+```
 
 # install composer
+```bash
 composer install
+```
 
 # create .env file
+```bash
 cp .env.example .env
+```
 
 # Generate application key
+```bash
 php artisan key:generate
+```
 
 3. Database Configuration
 ```bash
@@ -102,10 +109,12 @@ DB_PORT=3306
 DB_DATABASE=ticket_system
 DB_USERNAME=your_username
 DB_PASSWORD=your_password
+```
 
 Run migrations:
 ```bash
 php artisan migrate
+```
 
 4. Pusher Configuration
 1. Create a Pusher account and update .env:
@@ -118,22 +127,23 @@ PUSHER_APP_ID=1699146
 PUSHER_APP_KEY=8fd8fbea7eb3495717e5
 PUSHER_APP_SECRET=4fade3d1868c57fbbf64
 PUSHER_APP_CLUSTER=ap2
-
+```
 
 2. Frontend setup
 
 # Navigate to frontend directory
 ```bash
 cd support-ticket-frontend
-
+```
 # Install dependencies
 ```bash
 npm install
+```
 
 # Create environment file
 ```bash
 cp .env.example .env
-
+```
 ##Update frontend .env:
 ```bash
 
@@ -143,6 +153,7 @@ VITE_APP_PUSHER_KEY=your_pusher_app_key
 VITE_APP_PUSHER_CLUSTER=ap2
 VITE_APP_PUSHER_FORCE_TLS=true
 NODE_ENV=development
+```
 
 ## Running the Application
 
@@ -150,6 +161,7 @@ NODE_ENV=development
 ```bash
 cd support-ticket-backend
 php artisan serve
+```
 
     Backend will run on http://localhost:8000
 
@@ -158,6 +170,7 @@ php artisan serve
 ```bash
 cd support-ticket-frontend
 npm run dev
+```
 
 #### Frontend will run on http://localhost:3000
 
@@ -181,6 +194,7 @@ npm run dev
   "password": "password123",
   "password_confirmation": "password123",
 }
+```
 
 ### Response:
 ```bash
@@ -198,7 +212,7 @@ npm run dev
     "status": true,
     "message": "successfull register"
 }
-
+```
 ### POST /api/v1/login
 
 ### Request Body:
@@ -207,7 +221,7 @@ npm run dev
   "email": "john@example.com",
   "password": "password123"
 }
-
+```
 ### Response:
 ```bash
 {
@@ -225,7 +239,7 @@ npm run dev
     "status": true,
     "message": "successfull login"
 }
-
+```
 ### POST /api/v1/logout
 
 ### Logout user.:
@@ -237,6 +251,7 @@ npm run dev
     "status": true,
     "message": "Logged out successfully"
 }
+```
 
 ## Ticket Endpoints
 ### GET /api/v1/tickets
@@ -251,7 +266,7 @@ npm run dev
     "tickets": [...],
     "message": "get all tickets"
 }
-
+```
 ### POST /api/v1/tickets
 
 ### Create a new ticket.:
@@ -265,6 +280,7 @@ npm run dev
   "category": "Technical",
   "priority": "high"
 }
+```
 
 ### Response:
 ```bash
@@ -273,7 +289,7 @@ npm run dev
     "ticket": {...},
     "message": "create ticket"
 }
-
+```
 ###GET /api/v1/tickets/{id}
 #### Get specific ticket details.
 
@@ -285,7 +301,7 @@ npm run dev
   "status": "in_progress",
   "ticket_id": 2
 }
-
+```
 ### POST /api/v1/tickets/2/comments
 #### Authorization: Bearer <token>
 ### Request Body:
@@ -293,7 +309,7 @@ npm run dev
 {
   "content": "Hello, I need help with this issue"
 }
-
+```
 ### POST /api/v1/tickets/2/comments/1
 #### Authorization: Bearer <token>
 ### Request Body:
@@ -301,3 +317,4 @@ npm run dev
 {
   "content": "Hello, I need help with this issue"
 }
+```
