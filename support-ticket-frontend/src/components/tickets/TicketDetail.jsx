@@ -47,11 +47,11 @@ const TicketDetail = () => {
   };
 
   if (loading) {
-    <Loading/>
+   return  <Loading/>
   }
 
   if (error) {
-    <Error error={error}/>
+   return <Error error={error} />;
   }
 
   if (!ticket) {
