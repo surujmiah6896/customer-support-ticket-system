@@ -5,10 +5,10 @@ A comprehensive customer support ticketing system built with Laravel backend, Re
 
 ## Live Demo
 
-Frontend URL: https://customer-support-system-client.vercel.app
-Backend API: https://customer.support.creativeappbd.com
-Admin Demo: user: admin@gmail.com / password: 123456
-Customer Demo: suruj@gmail.com / 123456
+1. Frontend URL: https://customer-support-system-client.vercel.app
+2. Backend API: https://customer.support.creativeappbd.com
+3. Admin Demo: user: admin@gmail.com / password: 123456
+4. Customer Demo: suruj@gmail.com / 123456
 
 ## Features
 
@@ -129,6 +129,10 @@ PUSHER_APP_SECRET=4fade3d1868c57fbbf64
 PUSHER_APP_CLUSTER=ap2
 ```
 
+5. Add CORS setup:
+#### In config/cors.php
+1. 'paths' => ['api/*', 'sanctum/csrf-cookie'],
+2. 'allowed_origins' => ['http://localhost:3000'],
 2. Frontend setup
 
 # Navigate to frontend directory
@@ -159,7 +163,7 @@ NODE_ENV=development
 
 ### Start Backend Server
 ```bash
-cd support-ticket-backend
+##### cd support-ticket-backend
 php artisan serve
 ```
 
@@ -168,7 +172,7 @@ php artisan serve
     
 ### Start Frontend Server
 ```bash
-cd support-ticket-frontend
+##### cd support-ticket-frontend
 npm run dev
 ```
 
