@@ -302,8 +302,11 @@ const setupPusher = useCallback(async () => {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="border-t border-gray-200 p-4 bg-gray-50">
-        <form onSubmit={sendMessage} className="flex items-center space-x-3">
+      <div className="border-t border-gray-200 p-3 sm:p-4 bg-gray-50">
+        <form
+          onSubmit={sendMessage}
+          className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3"
+        >
           <input
             type="text"
             value={newMessage}
@@ -313,14 +316,18 @@ const setupPusher = useCallback(async () => {
                 ? "Type a message to customer..."
                 : "Type your message to support..."
             }
-            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 sm:px-4 sm:py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm sm:text-base"
             disabled={sending}
           />
-          <div>
-            <Button type="submit" disabled={sending || !newMessage.trim()}>
-              <FaArrowCircleUp size={20} /> {sending ? "Sending..." : "Send"}
-            </Button>
-          </div>
+
+          <Button
+            type="submit"
+            disabled={sending || !newMessage.trim()}
+            className="w-full sm:w-auto px-4 py-2 text-sm sm:text-base"
+          >
+            <FaArrowCircleUp className="w-4 h-4 sm:w-5 sm:h-5 inline mr-1 sm:mr-2" />
+            {sending ? "Sending..." : "Send"}
+          </Button>
         </form>
       </div>
     </div>
