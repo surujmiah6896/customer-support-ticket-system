@@ -73,10 +73,11 @@ Customer Demo: suruj@gmail.com / 123456
 ```bash
 # Clone backend and frontend repository
 git clone https://github.com/surujmiah6896/customer-support-ticket-system.git
-
+```
 # Change directory into the project
+```bash
 cd ticket-system
-
+```
 
 2. Backend Setup
 
