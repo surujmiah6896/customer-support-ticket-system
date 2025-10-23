@@ -110,138 +110,131 @@ const TicketList = () => {
 
   return (
     <div className="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-      <div className="mb-6 flex justify-between items-center">
-        <div className="flex items-center space-x-6">
-          <h1 className="text-3xl font-bold text-gray-900">Support Tickets</h1>
+      <div className="mb-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+              Support Tickets
+            </h1>
 
-          {/* Status-wise counts */}
-          <div className="flex items-center space-x-4">
-            {status && status.length > 0
-              ? status.map((item, index) => (
-                  <CountStatus
-                    key={index}
-                    tickets={tickets}
-                    title={item.title}
-                    type={item.type}
-                  />
-                ))
-              : " "}
+            <div className="flex flex-wrap gap-2 sm:gap-4">
+              {status && status.length > 0
+                ? status.map((item, index) => (
+                    <CountStatus
+                      key={index}
+                      tickets={tickets}
+                      title={item.title}
+                      type={item.type}
+                      compact={window.innerWidth < 640} 
+                    />
+                  ))
+                : " "}
+            </div>
           </div>
+
+          {!user?.isAdmin && (
+            <div className="sm:self-start">
+              <Button
+                color="bg-blue-600"
+                onClick={() => setShowForm(true)}
+                className="w-full sm:w-auto justify-center"
+              >
+                <FaPlus className="sm:mr-1" />
+                <span>Create</span>
+              </Button>
+            </div>
+          )}
         </div>
-
-        {!user?.isAdmin && (
-          <div className="w-[80]">
-            <Button color="bg-blue-600" onClick={() => setShowForm(true)}>
-              <FaPlus /> Create
-            </Button>
-          </div>
-        )}
       </div>
 
       <div className="bg-white shadow overflow-hidden sm:rounded-md">
         <ul className="divide-y divide-gray-200">
           {tickets.map((ticket) => (
-            <li key={ticket.id} className="hover:bg-gray-50 transition-colors">
-              <div className="px-4 py-4 sm:px-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
+            <li
+              key={ticket.id}
+              className="hover:bg-gray-50 transition-colors border-b border-gray-200"
+            >
+              <div className="px-3 py-3 sm:px-4">
+                <div className="grid grid-cols-1 gap-2">
+                  <div className="flex justify-between items-start gap-2">
                     <Link
                       to={`/tickets/${ticket.id}`}
-                      className="text-sm font-medium text-blue-600 truncate hover:text-blue-800"
+                      className="text-sm font-medium text-blue-600 hover:text-blue-800 line-clamp-1 flex-1"
                     >
                       {ticket.subject}
                     </Link>
-                    <Badge title={ticket.priority} />
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <Badge title={ticket.status} size="sm" />
+                      {user?.role === "admin" && (
+                        <select
+                          value={ticket.status}
+                          onChange={(e) =>
+                            handleStatusUpdate(ticket.id, e.target.value)
+                          }
+                          disabled={actionLoading}
+                          className="text-xs border border-gray-300 rounded px-1 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500  sm:block"
+                        >
+                          <option value="open">Open</option>
+                          <option value="in_progress">Progress</option>
+                          <option value="resolved">Resolved</option>
+                          <option value="closed">Closed</option>
+                        </select>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge title={ticket.status} />
 
-                    {user?.role === "admin" && (
-                      <select
-                        value={ticket.status}
-                        onChange={(e) =>
-                          handleStatusUpdate(ticket.id, e.target.value)
-                        }
-                        disabled={actionLoading}
-                        className="text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option value="open">Open</option>
-                        <option value="in_progress">In Progress</option>
-                        <option value="resolved">Resolved</option>
-                        <option value="closed">Closed</option>
-                      </select>
-                    )}
+                  {/* Row 2: Meta info and priority */}
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-3 text-xs text-gray-600">
+                      <span>{ticket.category}</span>
+                      <Badge title={ticket.priority} size="xs" />
+                      {ticket.assigned_to && (
+                        <span className="hidden sm:inline">
+                          • {ticket.assigned_user?.name || "Unassigned"}
+                        </span>
+                      )}
+                    </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex items-center space-x-1 ml-2">
+                    {/* action buttons */}
+                    <div className="flex items-center gap-1">
                       <Link
                         to={`/tickets/${ticket.id}`}
-                        className="text-gray-400 hover:text-blue-600 p-1 rounded transition-colors"
-                        title="View Details"
+                        className="text-gray-400 hover:text-blue-600 p-1 rounded"
+                        title="View"
                       >
-                        <FaEye size={16} />
+                        <FaEye size={14} />
                       </Link>
-
                       {(user?.role === "admin" ||
                         ticket.user_id === user?.id) && (
                         <>
                           <button
                             onClick={() => handleEdit(ticket)}
-                            disabled={actionLoading}
-                            className="text-gray-400 hover:text-green-600 p-1 rounded transition-colors disabled:opacity-50"
-                            title="Edit Ticket"
+                            className="text-gray-400 hover:text-green-600 p-1 rounded"
+                            title="Edit"
                           >
-                            <FaEdit size={16} />
+                            <FaEdit size={14} />
                           </button>
-
                           <button
                             onClick={() => handleDelete(ticket)}
-                            disabled={actionLoading}
-                            className="text-gray-400 hover:text-red-600 p-1 rounded transition-colors disabled:opacity-50"
-                            title="Delete Ticket"
+                            className="text-gray-400 hover:text-red-600 p-1 rounded"
+                            title="Delete"
                           >
-                            <FaTrash size={16} />
+                            <FaTrash size={14} />
                           </button>
                         </>
                       )}
                     </div>
+                      
                   </div>
-                </div>
 
-                <div className="mt-2 sm:flex sm:justify-between">
-                  <div className="sm:flex space-y-2 sm:space-y-0 sm:space-x-6">
-                    <p className="flex items-center text-sm text-gray-500">
-                      Category: {ticket.category}
+                  <div className="flex flex-col xs:flex-row xs:justify-between xs:items-center gap-1">
+                    <p className="text-xs text-gray-600 line-clamp-2 flex-1">
+                      {ticket.description}
                     </p>
-                    {user?.role === "admin" && ticket.user && (
-                      <p className="flex items-center text-sm text-gray-500">
-                        Customer: {ticket?.user?.name}
-                      </p>
-                    )}
-                    {ticket.assigned_to && (
-                      <p className="flex items-center text-sm text-gray-500">
-                        Assigned to:{" "}
-                        {ticket.assigned_user?.name || "Unassigned"}
-                      </p>
-                    )}
+                    <div className="text-xs text-gray-500 flex-shrink-0">
+                      {new Date(ticket.created_at).toLocaleDateString()}
+                    </div>
                   </div>
-                  <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                    <p>
-                      Created {new Date(ticket.created_at).toLocaleDateString()}
-                    </p>
-                    {ticket.updated_at !== ticket.created_at && (
-                      <p className="ml-4">
-                        Updated{" "}
-                        {new Date(ticket.updated_at).toLocaleDateString()}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="mt-2">
-                  <p className="text-sm text-gray-600 line-clamp-2">
-                    {ticket.description}
-                  </p>
                 </div>
               </div>
             </li>
