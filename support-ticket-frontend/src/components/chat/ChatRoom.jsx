@@ -256,9 +256,11 @@ const setupPusher = useCallback(async () => {
             <h3 className="text-lg font-medium text-gray-900">
               Real-time Chat
             </h3>
-            <p className="text-sm text-gray-500">
-              Chat with{" "}
-              {currentUser?.role === "admin" ? "customer" : "support team"}
+            <p className="text-sm flex flex-col gap-2 items-start text-gray-500">
+              <span>
+                Chat with{" "}
+                {currentUser?.role === "admin" ? "customer" : "support team"}
+              </span>
               <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
                 {messages.length} messages
               </span>
