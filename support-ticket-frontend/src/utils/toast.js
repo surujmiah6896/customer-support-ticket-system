@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
-export const Toast = (title, status) => {
-  if(status !== "delete"){
+export const Toast = (title, status= true) => {
+  if(status){
     toast.success(title, {
       position: "top-right",
     });

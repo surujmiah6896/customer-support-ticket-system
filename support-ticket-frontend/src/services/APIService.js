@@ -7,6 +7,7 @@ export const authAPI = {
   register: (userData) => api.post("/register", userData),
   logout: () => api.post("/logout"),
   getUser: () => api.get("/user"),
+  getCustomers: () => api.get("/customers"),
 };
 
 
@@ -14,10 +15,13 @@ export const authAPI = {
 export const ticketsAPI = {
   getAll: () => api.get("/tickets"),
   getById: (id) => api.get(`/tickets/${id}`),
-  create: (data) =>
-    api.post("/tickets", data, {
-      headers: { "Content-Type": "multipart/form-data" },
-    }),
+  create: (data) => {
+    const config =
+      data instanceof FormData
+        ? { headers: { "Content-Type": "multipart/form-data" } }
+        : {};
+    return api.post("/tickets", data, config);
+  },
   update: (id, data) => {
     const config =
       data instanceof FormData

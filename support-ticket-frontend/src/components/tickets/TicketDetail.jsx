@@ -181,7 +181,9 @@ const TicketDetail = () => {
                           Attachment
                         </h4>
                         <a
-                          href={`http://localhost:8000/storage/${ticket.attachment}`}
+                          href={`${import.meta.env.VITE_APP_API_URL}/${
+                            ticket.attachment
+                          }`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="mt-1 text-sm text-blue-600 hover:text-blue-500"

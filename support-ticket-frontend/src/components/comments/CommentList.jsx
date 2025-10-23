@@ -1,16 +1,18 @@
-
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { commentsAPI } from "../../services/APIService";
 import { Toast } from "../../utils/toast";
 import { Button } from "../../widgets/Button";
 import { FaBicycle, FaComment, FaPlus, FaTrash } from "react-icons/fa";
+import ConfirmationModal from "../tickets/ConfirmationModal";
 
 const CommentList = ({ ticketId, comments, onCommentAdded }) => {
   console.log("comments", comments);
 
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
+  const [deletingComment, setDeletingComment] = useState(null);
+  const [actionLoading, setActionLoading] = useState(false);
   const { user } = useAuth();
 
   const handleSubmit = async (e) => {
@@ -19,10 +21,14 @@ const CommentList = ({ ticketId, comments, onCommentAdded }) => {
 
     setLoading(true);
     try {
-      await commentsAPI.create(ticketId, { content: newComment });
-      setNewComment("");
-      onCommentAdded();
-      Toast('Comment Successfully!');
+      const res = await commentsAPI.create(ticketId, { content: newComment });
+      if (res.data && res.data.status) {
+        setNewComment("");
+        onCommentAdded();
+        Toast("Comment Successfully!");
+      } else {
+        Toast("Comment Fail!", false);
+      }
     } catch (error) {
       console.error("Error adding comment:", error);
     } finally {
@@ -30,17 +36,29 @@ const CommentList = ({ ticketId, comments, onCommentAdded }) => {
     }
   };
 
-  const handleDeleteComment = async (commentId) => {
-    if (!window.confirm("Are you sure you want to delete this comment?"))
-      return;
+  const confirmDelete = async () => {
+    if (!deletingComment) return;
 
+    setActionLoading(true);
     try {
-      await commentsAPI.delete(ticketId, commentId);
-      Toast("Delete Successfully!",'delete');
-      onCommentAdded();
+      const res = await commentsAPI.delete(ticketId, deletingComment.id);
+      if (res.data && res.data.status) {
+        onCommentAdded();
+        Toast("Delete Successfully!", false);
+      } else {
+        Toast("Delete Fail!", false);
+      }
+      setDeletingComment(null);
     } catch (error) {
-      console.error("Error deleting comment:", error);
+      console.error("Error deleting ticket:", error);
+      Toast("Delete error!", false);
+    } finally {
+      setActionLoading(false);
     }
+  };
+
+  const handleDelete = (ticket) => {
+    setDeletingComment(ticket);
   };
 
   return (
@@ -101,9 +119,15 @@ const CommentList = ({ ticketId, comments, onCommentAdded }) => {
                 </div>
 
                 {(user?.isAdmin || comment.user_id === user?.id) && (
-                    <div>
-                        <Button color="bg-red-500" onClick={() => handleDeleteComment(comment.id)}><FaTrash size={20}/></Button>
-                    </div>
+                  <div>
+                    <Button
+                      color="bg-red-500"
+                      onClick={() => handleDelete(comment)}
+                      disabled={actionLoading}
+                    >
+                      <FaTrash size={20} />
+                    </Button>
+                  </div>
                 )}
               </div>
               <div className="mt-2">
@@ -116,12 +140,24 @@ const CommentList = ({ ticketId, comments, onCommentAdded }) => {
         ) : (
           <div className="px-6 py-8 flex flex-col items-center">
             <FaComment size={20} />
-            <p className="text-gray-500">
-              No comments!
-            </p>
+            <p className="text-gray-500">No comments!</p>
           </div>
         )}
       </div>
+
+      {deletingComment && (
+        <ConfirmationModal
+          show={!!deletingComment}
+          onHide={() => setDeletingComment(null)}
+          onConfirm={confirmDelete}
+          title="Delete Ticket"
+          message={`Are you sure you want to delete ticket "${deletingComment.content}"? This action cannot be undone.`}
+          confirmText="Delete"
+          cancelText="Cancel"
+          variant="danger"
+          loading={actionLoading}
+        />
+      )}
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import TicketForm from "./TicketForm";
 import { ticketsAPI } from "../../services/APIService";
-import { FaTicketAlt, FaEdit, FaTrash, FaEye } from "react-icons/fa";
+import { FaTicketAlt, FaEdit, FaTrash, FaEye, FaPlus } from "react-icons/fa";
 import Loading from "../../widgets/Loading";
 import Badge from "../../widgets/Badge";
 import { Button } from "../../widgets/Button";
@@ -26,8 +26,12 @@ const TicketList = () => {
 
   const loadTickets = async () => {
     try {
-      const response = await ticketsAPI.getAll();
-      setTickets(response.data.tickets);
+      const res = await ticketsAPI.getAll();
+      if (res.data && res.data.status){
+        setTickets(res.data.tickets);
+      } else{
+        setTickets([]);
+      }
     } catch (error) {
       console.error("Error loading tickets:", error);
     } finally {
@@ -40,7 +44,7 @@ const TicketList = () => {
   };
 
   const handleUpdateTicket = async () => {
-    await loadTickets(); 
+    await loadTickets();
     setEditingTicket(null);
   };
 
@@ -53,15 +57,19 @@ const TicketList = () => {
 
     setActionLoading(true);
     try {
-      await ticketsAPI.delete(deletingTicket.id);
-      setTickets((prev) =>
-        prev.filter((ticket) => ticket.id !== deletingTicket.id)
-      );
-      setDeletingTicket(null);
-      Toast('Delete Successfully!', true);
+     const res = await ticketsAPI.delete(deletingTicket.id);
+     if(res.data && res.data.status){
+       setTickets((prev) =>
+         prev.filter((ticket) => ticket.id !== deletingTicket.id)
+       );
+       setDeletingTicket(null);
+       Toast("Delete Successfully!", true);
+     }else{
+        Toast("Delete error!", false);
+     }
     } catch (error) {
       console.error("Error deleting ticket:", error);
-      Toast("Delete error!", true);
+      Toast("Delete error!", false);
     } finally {
       setActionLoading(false);
     }
@@ -70,13 +78,17 @@ const TicketList = () => {
   const handleStatusUpdate = async (ticketId, newStatus) => {
     setActionLoading(true);
     try {
-      const response = await ticketsAPI.update(ticketId, { status: newStatus });
-      setTickets((prev) =>
-        prev.map((ticket) =>
-          ticket.id === ticketId ? response.data.ticket : ticket
-        )
-      );
-      Toast('Update Successfully!', true);
+      const res = await ticketsAPI.update(ticketId, { status: newStatus });
+      if(res.data && res.data.status){
+        setTickets((prev) =>
+          prev.map((ticket) =>
+            ticket.id === ticketId ? res.data.ticket : ticket
+          )
+        );
+        Toast("Update Successfully!", true);
+      }else{
+        Toast("Update Fail!", false);
+      }
     } catch (error) {
       console.error("Error updating ticket status:", error);
       Toast("Update error!", true);
@@ -120,7 +132,7 @@ const TicketList = () => {
         {!user?.isAdmin && (
           <div className="w-[80]">
             <Button color="bg-blue-600" onClick={() => setShowForm(true)}>
-              Create New Ticket
+              <FaPlus /> Create
             </Button>
           </div>
         )}

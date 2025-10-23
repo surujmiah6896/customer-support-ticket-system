@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { ticketsAPI } from "../../services/APIService";
+import { ticketsAPI, authAPI } from "../../services/APIService";
 import { useForm } from "react-hook-form";
 import { FormGroup } from "../../widgets/FromGroup";
 import { Button } from "../../widgets/Button";
-import { Toast } from '../../utils/toast';
+import { Toast } from "../../utils/toast";
 import { useAuth } from "../../contexts/AuthContext";
 import { FaPlus, FaTimes } from "react-icons/fa";
 
@@ -20,12 +20,17 @@ const TicketForm = ({
     formState: { errors, isSubmitting },
     reset,
     setValue,
+    watch,
   } = useForm();
 
   const [error, setError] = useState("");
   const [attachment, setAttachment] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [customers, setCustomers] = useState([]);
+  const [loadingCustomers, setLoadingCustomers] = useState(false);
   const { user } = useAuth();
+
+  const assignedTo = watch("assignedTo");
 
   useEffect(() => {
     if (show) {
@@ -36,6 +41,7 @@ const TicketForm = ({
         setValue("category", editTicket.category);
         setValue("priority", editTicket.priority);
         setValue("status", editTicket.status);
+        setValue("assignedTo", editTicket.user_id || "");
       } else {
         setIsEditing(false);
         reset();
@@ -45,6 +51,27 @@ const TicketForm = ({
     }
   }, [show, editTicket, reset, setValue]);
 
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      if (show && user?.role === "admin") {
+        setLoadingCustomers(true);
+        try {
+          const response = await authAPI.getCustomers();
+          if (response.data && response.data.status){
+            setCustomers(response.data.customers || []);
+          } 
+        } catch (err) {
+          console.error("Failed to fetch customers:", err);
+          setCustomers([]);
+        } finally {
+          setLoadingCustomers(false);
+        }
+      }
+    };
+
+    fetchCustomers();
+  }, [show, user]);
+
   const onSubmit = async (data) => {
     try {
       setError("");
@@ -53,22 +80,39 @@ const TicketForm = ({
 
       Object.keys(data).forEach((key) => {
         if (data[key] && key !== "attachment") {
-          submitData.append(key, data[key]);
+          if (key === "assignedTo") {
+            submitData.append("user_id", data[key]);
+          } else {
+            submitData.append(key, data[key]);
+          }
         }
       });
 
       if (attachment) {
         submitData.append("attachment", attachment);
       }
-      
+
+      if (!isEditing && user?.role === "admin" && !data.assignedTo) {
+        submitData.append("createdBy", user.id);
+      }
+
       if (isEditing && editTicket) {
-        await ticketsAPI.update(editTicket.id, submitData);
-        onTicketUpdated?.();
-        Toast("Ticket Updated Successfully!");
+        const res = await ticketsAPI.update(editTicket.id, submitData);
+        if(res.data && res.data.status){
+            onTicketUpdated?.();
+            Toast("Ticket Updated Successfully!",true);
+        }else{
+          Toast("Ticket Updated Fail!", false);
+        }
+        
       } else {
-        await ticketsAPI.create(submitData);
-        onTicketCreated?.();
-        Toast("Ticket Created Successfully!");
+       const res = await ticketsAPI.create(submitData);
+       if (res.data && res.data.status) {
+         onTicketCreated?.();
+         Toast("Ticket Created Successfully!");
+       } else {
+         Toast("Ticket Created Fail!", false);
+       }
       }
 
       reset();
@@ -168,7 +212,29 @@ const TicketForm = ({
               />
             </div>
 
-            {isEditing && user?.role == "admin" && (
+            {/* Customer Assignment - only for admin */}
+            {user?.role === "admin" && (
+              <FormGroup
+                label={"Assign to Customer"}
+                type="select"
+                {...register("assignedTo")}
+                error={errors.assignedTo}
+                options={[
+                  { value: "", label: "Select Customer" },
+                  ...customers.map((customer) => ({
+                    value: customer.id,
+                    label: `${customer.name}`,
+                  })),
+                ]}
+                disabled={loadingCustomers}
+              />
+            )}
+
+            {loadingCustomers && (
+              <div className="text-sm text-gray-500">Loading customers...</div>
+            )}
+
+            {isEditing && user?.role === "admin" && (
               <FormGroup
                 label={"Status"}
                 type="select"
@@ -193,7 +259,9 @@ const TicketForm = ({
             {isEditing && editTicket?.attachment && (
               <div className="text-sm text-gray-600">
                 <p>Current Attachment: {editTicket.attachment}</p>
-                <p className="text-xs text-gray-500">Upload a attachment</p>
+                <p className="text-xs text-gray-500">
+                  Upload a new file to replace current attachment
+                </p>
               </div>
             )}
 
@@ -203,7 +271,6 @@ const TicketForm = ({
               </Button>
 
               <Button type="submit" disabled={isSubmitting}>
-                {" "}
                 <FaPlus />
                 {isSubmitting
                   ? isEditing

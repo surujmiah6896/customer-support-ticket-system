@@ -2,30 +2,20 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss({
-      theme: {
-    extend: {
-      colors: {
-        primary: {
-          50: '#eff6ff',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-        }
-      }
+  plugins: [react(), tailwindcss()],
+  build: {
+    outDir: "dist",
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        assetFileNames: "assets/[name]-[hash][extname]",
+        chunkFileNames: "assets/[name]-[hash].js",
+        entryFileNames: "assets/[name]-[hash].js",
+      },
     },
   },
-      darkMode: "class", // optional (for dark mode toggle)
-      plugins: {
-        // You can include built-in plugins directly here
-        typography: true,
-        forms: true,
-        aspectRatio: true,
-      },
-    }),
-  ],
+  server: {
+    port: 3000,
+  },
 });
