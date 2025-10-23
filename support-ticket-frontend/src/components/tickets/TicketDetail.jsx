@@ -93,7 +93,7 @@ const TicketDetail = () => {
             </div>
           </div>
 
-          {user?.isAdmin && (
+          {user?.role === "admin" && (
             <div className="flex gap-2">
               <select
                 value={ticket.status}
@@ -231,7 +231,7 @@ const TicketDetail = () => {
                   Open Chat
                 </Button>
 
-                {user?.isAdmin && (
+                {user?.role === 'admin' && (
                   <Button
                     color="bg-gray-600"
                     onClick={() => updateTicketStatus("closed")}

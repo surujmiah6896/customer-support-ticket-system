@@ -132,7 +132,7 @@ const TicketList = () => {
             </div>
           </div>
 
-          {!user?.isAdmin && (
+          {user?.role !== 'admin' && (
             <div className="sm:self-start w-full sm:w-auto">
               <Button
                 color="bg-blue-600"

@@ -74,7 +74,7 @@ A comprehensive customer support ticketing system built with Laravel backend, Re
 # Clone backend and frontend repository
 git clone https://github.com/surujmiah6896/customer-support-ticket-system.git
 ```
-# Change directory into the project
+### Change directory into the project
 ```bash
 cd ticket-system
 ```
@@ -86,12 +86,12 @@ cd ticket-system
 cd support-ticket-backend
 ```
 
-# install composer
+### install composer
 ```bash
 composer install
 ```
 
-# create .env file
+### create .env file
 ```bash
 cp .env.example .env
 ```
@@ -135,16 +135,16 @@ PUSHER_APP_CLUSTER=ap2
 2. 'allowed_origins' => ['http://localhost:3000'],
 2. Frontend setup
 
-# Navigate to frontend directory
+### Navigate to frontend directory
 ```bash
 cd support-ticket-frontend
 ```
-# Install dependencies
+### Install dependencies
 ```bash
 npm install
 ```
 
-# Create environment file
+### Create environment file
 ```bash
 cp .env.example .env
 ```

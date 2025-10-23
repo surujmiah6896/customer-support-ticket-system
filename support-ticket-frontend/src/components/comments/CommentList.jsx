@@ -118,7 +118,7 @@ const CommentList = ({ ticketId, comments, onCommentAdded }) => {
                   </div>
                 </div>
 
-                {(user?.isAdmin || comment.user_id === user?.id) && (
+                {(user?.role === 'admin' || comment.user_id === user?.id) && (
                   <div>
                     <Button
                       color="bg-red-500"
